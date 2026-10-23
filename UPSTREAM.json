@@ -1,0 +1,16 @@
+{
+  "_comment": "Openlibs 복제 원본 기록. pinned = 현재 개발 기준 버전. check_updates.py 가 upstream 최신과 비교한다. 소스는 해당 태그의 작업 트리 사본(.git 제외).",
+  "libs": {
+    "rhwp": {
+      "repo": "edwardkim/rhwp", "license": "MIT", "role": "HWP/HWPX 파서·렌더러·에디터(Rust+WASM)",
+      "pinned_tag": "v0.8.7", "pinned_commit": "1a76570e833917d15817415a53c09ad61ab3203f", "pinned_on": "2026-10-23",
+      "excluded": ["mydocs", "pdf", "samples", "tools", "saved", "gym", "fuzz", "ttfs", "tests", ".git"],
+      "excluded_why": "용량(저장소 전체 약 8.7GB, 사본 105MB로 축소)·글꼴 재배포 회피. 필요 시 upstream 에서 받는다."
+    },
+    "python-hwpx": {
+      "repo": "airmang/python-hwpx", "license": "Apache-2.0", "role": "HWPX 읽기·편집·생성(Python, lxml)",
+      "pinned_tag": "v6.8.0", "pinned_commit": "3a52d899de7a6cd42ebb7b1021e2916719ff8709", "pinned_on": "2026-10-23",
+      "excluded": [".git"], "excluded_why": ""
+    }
+  }
+}

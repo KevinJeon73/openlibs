@@ -1,0 +1,181 @@
+# 실측 코퍼스 메트릭 (M9 Published Corpus)
+
+`python-hwpx` 스택이 만든 산출물을 **실제 한컴오피스**(Windows COM + Mac GUI 오라클)로
+전수 측정한 결과다. 아래 숫자는 전부 동결 코퍼스 위에서 기계 판정으로 산출되며,
+릴리스마다 재측정해 이 페이지와 히스토리 파일에 추가된다.
+
+```{note}
+**지표 축 주석 (반드시 읽을 것).** 이 페이지의 숫자는 *생성물 수용률* 계열이다 —
+"우리가 만든 HWPX를 실제 한컴이 열고/파싱하고/렌더하는가, 채움이 서식을 보존하는가,
+개인정보가 새지 않는가". 문서 *파싱 recall*(남의 파일을 얼마나 잘 읽는가)과는 다른
+축이므로, 파서 프로젝트의 수치와 병치 비교하면 안 된다.
+```
+
+## 최신 측정 (2026-08-03 · corpus v3 · N=120 produced + 3 negative controls)
+
+측정 스택: **python-hwpx 5.7.0 · python-hwpx-automation 6.7.1** · 실한컴
+**12.0.0.3288**(`hancom_build`를 박스 런이 COM 서버 실바이너리에서 직접 기록 —
+open 채널과 render 채널의 기록이 일치해야 발행) · Windows COM 무인 scheduled task.
+
+**축소 범위 명시**: v3는 497 전수 재측정이 아니다. 비교 기준용 baseline 1개
+스트라텀 + **4.x/5.x가 추가한 저작 표면 6종**(각주·누름틀·수식·차트·체크박스·
+편집 계획) 각 1개 스트라텀 = 120건이며, v1/v2 수치(아래, 3.4.1 측정)를 대체하지
+않고 병기한다. 측정을 부풀리는 것보다 줄이고 정직한 쪽을 택했다.
+
+| 스트라텀 | 오픈 | 파싱 | 렌더 검증 | 비고 |
+|---|---|---|---|---|
+| baseline-regen (30) | 30/30 | 30/30 | 30/30 | v1 authored 형상을 현행 코어로 재방출 |
+| authored-footnote (15) | 15/15 | 15/15 | 15/15 | 5.5 각주/미주 렌더 계약 수리분 |
+| authored-formfield (15) | 15/15 | 15/15 | 15/15 | CLICKHERE 생성 + 스타일 보존 채움 |
+| authored-equation (15) | 15/15 | 15/15 | 15/15 | `latex_to_eqedit` 검증 토큰셋 |
+| authored-chart (15) | 15/15 | 15/15 | 15/15 | office.charting ChartML → `add_chart` |
+| authored-checkbox (15) | 15/15 | 15/15 | 15/15 | 5.7 `add_check_box`/`set_check_box` |
+| edit-plan (15) | 15/15 | 15/15 | 15/15 | `hwpx.plan` 원자 실행 산출물 |
+| **합계 (120)** | **120/120** (rule-of-three 하한 **97.5%**) | 120/120 | 120/120 (COM SaveAs+fitz 양쪽) | 네거티브 컨트롤 3/3 정상 거부(harness valid) |
+
+원시 영수증: [`report-v3.json`](openrate/report-v3.json) ·
+[`verdicts_v3.jsonl`](openrate/verdicts_v3.jsonl) — **행마다 `bucket` 필드가
+있어 위 분모 분해 전체를 `jq` 한 줄로 재현할 수 있다**(v2 영수증의 재현성
+갭을 이번 발행부터 수리).
+
+## 왕복 충실도 (2026-08-19 · roundtrip v1 · N=76 실한컴 저장본)
+
+위 지표들과 **반대 방향**의 축이다 — 우리가 만든 문서를 한컴이 여는가가 아니라,
+**실한컴이 저장한 문서를 우리가 읽고 무편집 재직렬화(`open()`→`to_bytes()`)했을
+때 무엇이 변하는가, 그 산출물을 실한컴이 다시 여는가**. 분모는 공개 체크아웃에서
+provenance를 증명할 수 있는 실한컴 저장본 전수다(`version.xml`의
+`application="Hancom Office Hangul"` 직접 확인 — 우리가 만들지 않은 입력).
+
+| 축 | 결과 | 판정자 | 비고 |
+|---|---|---|---|
+| 분모 자격 심사 | 76 편입 / 3 정직 제외 | version.xml provenance | 제외: hwpxlib 산출물 1 + 실한컴이 손상 거부하는 의도적 비표준 픽스처 2 |
+| 바이트 분류 | **byte-identical 22 · zip-container-only 54 · cosmetic 0 · substantive 0** | 멤버 단위 XML 구조 diff | **실질 구조 변화 0** — zip-container-only는 압축 프레이밍 차이뿐(전 멤버 내용 동일) |
+| 실한컴 재개봉 | **판정 가능 73/73 무손상 개봉** | Mac 한컴 12.30.0 build 6446 GUI(open→PDF→close) | 원본 자체가 이 오라클에서 안 열리는 3건은 분리 버킷(아래) — 왕복 원인 실패 **0** |
+| 판정 채널 유효성 | 음성 대조 2/2 정상 거부 | 실한컴 손상-거부 픽스처 | 하나라도 "성공"하면 전체 무효(fail-closed) — 조용한 auto-repair 오독 방지 |
+
+**정직 버킷 — `original-unopenable-on-this-oracle` 3건**: fuzz 회귀 베이스라인 1 ·
+문서 이력(DocHistory HML 임베드) 표본 1 · hwpxlib 코퍼스의 에러 아카이브 1.
+셋 다 **원본부터 이 Mac 오라클에서 열리지 않음**을 원본/왕복 차등 재실행으로
+확인했다(왕복 산출물만 실패한 사례 = 0). 이 버킷은 pass로도 fail로도 집계하지
+않는다 — [오라클 한계 규율](internals/oracle-limits.md)과 동일한 원칙이다.
+
+재현: 바이트 분류는 `python scripts/roundtrip_fidelity.py`(결정론 매니페스트,
+연속 실행 바이트 동일), 상주 회귀는 `tests/test_roundtrip_fidelity_corpus.py`가
+매 스위트에서 "substantive 0"을 게이트로 강제한다. 재개봉 배치는
+python-hwpx-automation `scripts/roundtrip_reopen_mac.py`. 원시 영수증:
+[`manifest-v1.json`](roundtrip/manifest-v1.json) ·
+[`reopen-receipt-v1.json`](roundtrip/reopen-receipt-v1.json).
+
+## 이전 전수 측정 (2026-07-19 · corpus v2 · N=497 produced + 9 negative controls)
+
+측정 스택: python-hwpx 3.4.1 후보(코퍼스 측정 시점 소스; v3.4.0은 게이트 실패로 미발행 보존 태그) · 실한컴 12.0.0.3288
+(Windows COM, 무인 scheduled task) · Mac 한컴 12.30 GUI(샘플 오라클).
+
+| 축 | 결과 | 판정자 | 비고 |
+|---|---|---|---|
+| **오픈 수용률** | **476/476 = 100% all-pass** (rule-of-three 하한 99.37%) | 실한컴 COM `Open()` | product-provenance 분모. 내부 픽스처 21건은 별도 발행(아래) |
+| 파싱(내용 적재) | 458/476 = 96.2% | COM 텍스트 프로브 (redline 문서는 `InitScan/GetText` 42/42) | 비텍스트 문서(그림 전용 등)는 정의상 비파싱 집계 |
+| 렌더 검증 | render_checked 416/476 | COM `SaveAs("PDF")` → 오프라인 fitz | +43 `render_unavailable` (한컴이 변경추적 문서의 PDF export 자체를 거부 — 실측 한계) · +17 unverified |
+| 바이트 보존 | **497/497 = 100%** (미수정 part) | zip-part diff (오라클 불요) | patch 경로 한정 — 풀세이브는 명시적 out-of-claim |
+| 양식 채움 차등 | **산출+fail 5/66=7.6%** (측정 인공물 교정 후 · 그중 엔진 경고조차 없는 완전 무음 1/66) · 산출분 pass 23/28=82.1% · typed 거부 35/66(전수 감별: 과잉거부 0) | blank↔filled 실렌더 기하 비교(테두리 기반 판정) | 아래 "구조결함 2차 실측" 절 — 개선분은 제품 변경이 아니라 판정기 교정임을 명시 |
+| 저작 품질 게이트 | 58/65 = 89.2% | 공문 구조 hard-gate + 품질 검사 (오라클 불요) | 실패 7건 전원이 **의도적 결문-생략 네거티브 변종** (게이트 판별력 증거) — 실저작 58/58 |
+| PII 0-leak | **0 누출** (35문서 / 합성 개인정보 140값) | raw-grep 전 산출물 + MCP 추출 3표면 | 마스킹 default-on 경로 |
+| 네이티브 목차 | 구조 15/15 · 실한컴 재계산 후 페이지 정합 5/5 | 구조 검사 + Mac 한컴 refresh→render 샘플 | refresh와 export는 세션 분리(한컴 크래시 회피 계약) |
+
+**정직 버킷 규율**: 렌더 실패·미검증은 절대 pass로 집계하지 않는다. 변경추적 문서
+43건의 `render_unavailable`은 한컴 자체의 제약을 그대로 발행한 것이다. 내부 진단
+픽스처 21건(재생 프로브·스크립트 제작 마스터)은 정체 기준으로 태깅해 분리 발행한다
+(10 open / 11 refuse — 제품 산출물 아님).
+
+## 양식 채움 fit 실측 (S-085, 2026-07-20)
+
+같은 66쌍을 fit 비활성(baseline)과 fit 활성(height-budget 엔진)으로 실한컴 렌더해
+차등 판정한 결과. 층은 채움 값 길이로 나눈다(short/medium=기대-통과, overflow=
+의도적 과적재 스트레스).
+
+| 층 | fit-off | fit-on | 비고 |
+|---|---|---|---|
+| short (한두 글자) | 15/22 = 68% | 15/22 = 68% | **0 이동** — 축소할 값이 없으므로 fit 무관 |
+| medium | 12/22 = 55% | 12/22 = 55% | 0 이동 |
+| overflow-stress | 7/22 = 32% | 8/22 = 36% | +4pp — fit이 실제로 작동하는 유일한 층 |
+| **기대-통과(short+medium)** | **27/44 = 61.4%** | **27/44 = 61.4%** | 0 이동 |
+
+**결론(정직 발견)**: 양식 채움 차등 실패의 **지배 원인은 fit이 아니라 구조적
+요인**이다. short 값(축소 불가)조차 68%에 정체하는 것이 그 증거다. 측정된 3부류
+지배 결함: ① 채움 시 글자 겹침(3글자 채움에 겹침 1621개 관측) ② 대형 다중
+페이지 양식의 경계 밀림(page N→N+1) ③ 표 구조 민감도. **fit 엔진 개선(가로·세로
+예산 측정으로 축소·typed 거부 실동작)은 correctness로 출하**하되(단위 증명 +
+leap 데모 `demo/S-085-wild-formfill/`), wild 통과율 자체는 이 3부류가 해결돼야
+오르는 잔여 과제로 명명한다. 무음 서식 파괴(조용한 페이지 밀림)는 이제 typed
+거부로 대체된다.
+
+## 구조결함 1차 실측 (S-087, 2026-07-20)
+
+S-085가 명명한 지배결함의 근본원인을 실한컴 프로브 매트릭스로 확정하고 픽스했다:
+**fit 엔진이 셀 안 인라인 treat-as-char 객체(체크박스 등)의 선언 폭을 비모델링**해
+"fits"로 오판 → 실한컴에서 줄바꿈·행 성장 → 다중 페이지 양식의 페이지네이션 연쇄
+(준-빈 페이지 생성, 10p→11p). 캐시·dirty 속성은 export에 무영향임을 프로브로 반증
+(가설 정정 이력은 evidence 원문에 보존).
+
+| 처리 (66 판정 조합) | short | medium | overflow | 계 |
+|---|---|---|---|---|
+| typed 거부 (산출물 없음) | 8 | 12 | 15 | 35 |
+| 산출 + pass | 9 | 7 | 4 | 20 |
+| 산출 + fail (잔여 무음 파괴) | 5 | 3 | 3 | **11** |
+
+- **무음 서식파괴율 31/66=47% → 11/66=16.7%** (expected-pass 층 38.6%→18.2%).
+- 산출분 공식 passRate 17/28 = 60.7%.
+- 거부 다수는 코퍼스의 "첫 빈 셀" 타깃(체크박스 셀 등)에 대한 true-negative —
+  실사용은 라벨 매칭 타깃을 쓴다.
+- 잔여 11 = ②페이지 리플 5·③표 shape 6 (동근 의심): 명명된 후속(폰트 대체
+  가설 스파이크·다중페이지 render-gate 규칙).
+
+## 구조결함 2차 실측 (2026-07-21)
+
+1차가 남긴 잔여 11건(리플 5·표 shape 6)의 근본원인을 반증 가능 프로브로 갈랐다.
+
+- **표 shape 6건(+overflow 오탐 3건) = 측정 인공물.** 차등 판정기가 쓰던 fitz
+  `find_tables()` 기본 전략이 표 경계를 글리프에 스냅해, 빈 셀을 채우면 그려진
+  격자가 바이트 동일한데도 유령 표를 검출했다(결정적 프로브: 그려진 rect 66=66
+  동일 문서에서 유령 (1,2) 표 발명). 판정기를 테두리 전용(`lines_strict`)으로
+  교정 — **제품 산출물은 바이트 하나 변하지 않았다**. 교정 후 산출분 pass
+  17/28 → **23/28 = 82.1%**, 회귀 0.
+- **페이지 리플 5건 = 진짜 레이아웃-발산(정직 잔존).** 채운 값이 행을 키워 페이지
+  경계를 넘친다. 5건 중 4건은 엔진이 이미 typed overflow 경고를 동반하고, 완전
+  무음은 1건(타이트 저작줄 높이-모델 갭, 반사실 blast-radius=1 실측 후 정직
+  defer — 페이지 경계 예측은 레이아웃 엔진 없이 불가). 리플의 겹침 부수증상
+  3건은 겹침 글리프 전수가 원본 본문으로 확인(채움 값 아님).
+- **typed 거부 35건 전수 감별 = 과잉거부 0.** 21건은 기관 로고(treatAsChar 그림)
+  셀 오타깃에 대한 구조적 참(경계 실렌더로 정당-보수 확인), 6건 realistic 높이
+  거부 정당, 8건 스트레스 true-negative. 높이 예산 캘리브레이션 보정 불요.
+
+| 처리 (66 판정 조합) | short | medium | overflow | 계 |
+|---|---|---|---|---|
+| typed 거부 (산출물 없음) | 8 | 12 | 15 | 35 |
+| 산출 + pass (완전 판정) | 10 | 9 | 4 | **23** |
+| 산출 + pass (overflow-clip 미판정층, 정직 별도) | 1 | 1 | 1 | 3 |
+| 산출 + fail (진짜 리플) | 3 | 0 | 2 | **5** |
+
+## 릴리스별 히스토리
+
+기계 판독본: {download}`corpus-metrics-history.json <corpus-metrics-history.json>`.
+오라클 열은 **실제 박스 런이 있었던 릴리스만** 채운다(추정 금지).
+
+| 릴리스(측정 스택) | 일자 | N | 오픈 | 파싱 | 렌더 | 바이트 | PII |
+|---|---|---|---|---|---|---|---|
+| 3.8.0 (corpus v2, 뷰어·수식 렌더 추가) | 2026-07-21 | 497 | **100%** (476/476) | 96.2% | 416 checked / 43 unavailable / 17 unverified | 100% | 0-leak |
+| 3.7.0 (corpus v2, 계약 추가·박스 재측정 없음) | 2026-07-21 | 497 | **100%** (476/476) | 96.2% | 416 checked / 43 unavailable / 17 unverified | 100% | 0-leak |
+| 3.6.0 (corpus v2, S-087) | 2026-07-20 | 497 | **100%** (476/476) | 96.2% | 416 checked / 43 unavailable / 17 unverified | 100% | 0-leak |
+| 3.5.0 (corpus v2) | 2026-07-19~20 | 497 | **100%** (476/476) | 96.2% | 416 checked / 43 unavailable / 17 unverified | 100% | 0-leak |
+| 3.4.1 (corpus v2) | 2026-07-19 | 497 | **100%** (476/476) | 96.2% | 416 checked / 43 unavailable / 17 unverified | 100% | 0-leak |
+| 2.29.x (corpus v1, FLOOR) | 2026-07-01 | 100 | 100% (100/100) | 95% | — (미공급) | — | — |
+
+## 방법론 요약
+
+- **코퍼스 동결**: manifest sha256·시드·도구 버전 기록, additive-only(v1 불변 가드).
+  네거티브 컨트롤(손상 파일 등)이 먼저 판정되어 오라클 자체를 검증한다.
+- **분모 규율**: judged-only, unverified 별도 버킷, rule-of-three 하한 병기,
+  vacuous 측정 금지(PII는 PII-보유 스트라텀 위에서만).
+- **재현**: `scripts/generate_openrate_corpus.py`(생성) →
+  `scripts/hancom_open_rate.ps1`·`scripts/hancom_render_batch.ps1`(박스 무인 판정) →
+  `scripts/corpus_open_rate.py` 외 축별 드라이버(집계). 전 과정 영수증(JSONL) 기반.

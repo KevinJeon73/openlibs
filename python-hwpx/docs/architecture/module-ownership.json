@@ -1,0 +1,738 @@
+{
+  "schemaVersion": "python-hwpx.module-ownership/v1",
+  "baseline": {
+    "version": "4.2.0",
+    "commit": "f6b79f010d40a190fa6a8391eb212835022b3851",
+    "sourceRoot": "src/hwpx",
+    "sourceFileCount": 176,
+    "sourcePathListSha256": "0ef0006565f776b43fe978489db1eb5ca2e72b2e027d11ad9206ca9c0eb7131d",
+    "pathFixture": "docs/architecture/module-ownership-baseline-4.2.json",
+    "sourceLoc": 67047,
+    "dispositionCounts": {
+      "core": {
+        "files": 95,
+        "loc": 33347
+      },
+      "mcp-migrate": {
+        "files": 59,
+        "loc": 28364
+      },
+      "split": {
+        "files": 14,
+        "loc": 3749
+      },
+      "dev-only": {
+        "files": 8,
+        "loc": 1587
+      },
+      "undecided": {
+        "files": 0,
+        "loc": 0
+      }
+    }
+  },
+  "removedPathInventory": {
+    "version": "5.0.0",
+    "sourceRoot": "src/hwpx",
+    "pathCount": 77,
+    "pathListSha256": "4b8b4da35b3cf44503eb0dba05e335de1894ca5dd0b2fb668692a69e21ae6172",
+    "pathFixture": "docs/architecture/module-ownership-removed-5.0.json"
+  },
+  "semantics": {
+    "matching": "first matching rule wins; unmatched Python files fail closed",
+    "core": "HWPX object model, package/OXML, serialization, generic editing and preservation contracts",
+    "mcp-migrate": "application workflow, genre/profile/policy or agent runtime; canonical owner python-hwpx-automation",
+    "split": "contains both reusable format contract and application/runtime implementation; split before removal",
+    "dev-only": "repository verification asset, not a public runtime product surface",
+    "undecided": "temporary exception requiring an owner and removal date",
+    "removed": "physically removed in the recorded major; the rule is retained as a record so a later reader can see where the surface went rather than finding an unexplained gap"
+  },
+  "canonicalizationProgress": {
+    "status": "closed",
+    "applicationOwner": "python-hwpx-automation",
+    "currentNonCore": {
+      "mcp-migrate": {
+        "files": 0,
+        "loc": 0
+      },
+      "split": {
+        "files": 0,
+        "loc": 0
+      },
+      "dev-only": {
+        "files": 0,
+        "loc": 0
+      },
+      "undecided": {
+        "files": 0,
+        "loc": 0
+      }
+    },
+    "coreOwnedReclassifications": [
+      "src/hwpx/form_fit/**",
+      "src/hwpx/tools/page_guard.py",
+      "src/hwpx/tools/template_analyzer.py",
+      "src/hwpx/tools/doc_diff.py",
+      "src/hwpx/tools/mail_merge.py",
+      "src/hwpx/tools/redline.py"
+    ],
+    "rationale": "The fit decision contract is used by core table and field APIs; the two format-inspection CLIs are core-native; document diff, explicit-sanitizer merge, and injected-renderer redline contain only neutral library behavior after their application members moved."
+  },
+  "rules": [
+    {
+      "glob": "src/hwpx/agent/**",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.agent",
+      "rationale": "agent commands, blueprint replay and CLI are application runtime"
+    },
+    {
+      "glob": "src/hwpx/authoring.py",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.authoring",
+      "rationale": "document-plan workflow and genre quality inspection"
+    },
+    {
+      "glob": "src/hwpx/builder/**",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.authoring",
+      "rationale": "application document-plan builders including approval-box composition"
+    },
+    {
+      "glob": "src/hwpx/design/**",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.authoring",
+      "rationale": "layout-plan workflow and profile composition"
+    },
+    {
+      "glob": "src/hwpx/evalplan_fill.py",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.evalplan",
+      "rationale": "evaluation-plan-specific fill workflow"
+    },
+    {
+      "glob": "src/hwpx/fill_residue.py",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.form_fill",
+      "rationale": "form workflow cleanup policy"
+    },
+    {
+      "glob": "src/hwpx/form_fill.py",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.form_fill",
+      "rationale": "high-level form workflow"
+    },
+    {
+      "glob": "src/hwpx/form_fit/**",
+      "disposition": "core",
+      "futureOwner": "python-hwpx",
+      "rationale": "neutral slot measurement and keep/wrap/shrink application used by core table and field APIs; seal, PDF and institutional policy live only in python-hwpx-automation"
+    },
+    {
+      "glob": "src/hwpx/formfill_quality.py",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.form_fill",
+      "rationale": "form workflow quality policy"
+    },
+    {
+      "glob": "src/hwpx/guidance_scan.py",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.form_fill",
+      "rationale": "form instruction classification"
+    },
+    {
+      "glob": "src/hwpx/presets/**",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.authoring",
+      "rationale": "application document presets"
+    },
+    {
+      "glob": "src/hwpx/template_formfit.py",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.form_fill",
+      "rationale": "template-specific form workflow"
+    },
+    {
+      "glob": "src/hwpx/tools/advanced_generators.py",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.authoring",
+      "rationale": "organization chart, nameplate and image-grid composition"
+    },
+    {
+      "glob": "src/hwpx/tools/official_lint.py",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.compliance",
+      "rationale": "official-document policy"
+    },
+    {
+      "glob": "src/hwpx/tools/page_guard.py",
+      "disposition": "core",
+      "futureOwner": "python-hwpx",
+      "rationale": "renderer-neutral package structure metrics exposed by a core-native format inspection CLI"
+    },
+    {
+      "glob": "src/hwpx/tools/pii.py",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.compliance",
+      "rationale": "PII detection and masking policy is not HWPX format behavior"
+    },
+    {
+      "glob": "src/hwpx/tools/style_profile.py",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.authoring",
+      "rationale": "template registry and style-profile workflow"
+    },
+    {
+      "glob": "src/hwpx/tools/table_compute.py",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.utilities",
+      "rationale": "pure tabular data calculation with no HWPX semantics"
+    },
+    {
+      "glob": "src/hwpx/tools/template_analyzer.py",
+      "disposition": "core",
+      "futureOwner": "python-hwpx",
+      "rationale": "format-level OPC, style, geometry and archive inspection; agent-oriented schema projection is application-owned and absent here"
+    },
+    {
+      "glob": "src/hwpx/visual/**",
+      "disposition": "mcp-migrate",
+      "futureOwner": "hwpx_automation.office.rendering",
+      "rationale": "the former mixed package was removed; neutral protocols live under hwpx.quality.rendering"
+    },
+    {
+      "glob": "src/hwpx/tools/doc_diff.py",
+      "disposition": "core",
+      "futureOwner": "python-hwpx",
+      "rationale": "generic text diff and reference consistency only; comparison-plan composition is application-owned"
+    },
+    {
+      "glob": "src/hwpx/tools/mail_merge.py",
+      "disposition": "core",
+      "futureOwner": "python-hwpx",
+      "rationale": "generic explicit-sanitizer merge seam; application PII and batch policy are absent"
+    },
+    {
+      "glob": "src/hwpx/tools/redline.py",
+      "disposition": "core",
+      "futureOwner": "python-hwpx",
+      "rationale": "tracked-change structure and injected renderer protocol only; Hancom discovery and policy are application-owned"
+    },
+    {
+      "glob": "src/hwpx/benchmark/**",
+      "disposition": "dev-only",
+      "futureOwner": "python-hwpx repository QA",
+      "rationale": "benchmark campaign is not runtime library behavior"
+    },
+    {
+      "glob": "src/hwpx/conformance/**",
+      "disposition": "dev-only",
+      "futureOwner": "python-hwpx repository QA",
+      "rationale": "corpus and conformance campaign are verification assets"
+    },
+    {
+      "glob": "src/hwpx/**",
+      "disposition": "core",
+      "futureOwner": "python-hwpx",
+      "rationale": "default only after all application, split and dev-only rules"
+    }
+  ],
+  "exceptions": [
+    {
+      "path": "src/hwpx/_document/_legacy.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "6.0 이주 창을 여는 위임 shim 79종. 본문은 5.8.0 document.py 의 것을 그대로 옮겼고 소유 모듈도 그대로다. 7.0에서 파일째 삭제된다"
+    },
+    {
+      "path": "src/hwpx/_document/_resolve.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "section=/paragraph= 인자의 단일 해석 지점. 파사드 경계에서 한 번 해석해 소유 모듈이 항상 객체만 받게 한다"
+    },
+    {
+      "path": "src/hwpx/_document/headings.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "add_heading 의 개요 스타일 해석과 hh:heading 결합. 스타일과 개요 수준이 분리돼 있던 5.x 결함을 닫는다"
+    },
+    {
+      "path": "src/hwpx/_document/highlight.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.2/highlight-authoring",
+      "rationale": "doc.text.highlight/highlights 의 소유 모듈. markpenBegin/markpenEnd 저작(단일-run 매치, tracked._paragraph_has_replaceable_text 와 같은 형태의 사전검사)과 읽기(hp:t 당 LIFO 스택, text_extractor 의 highlight_stack 을 공개 모델로 재노출)를 둘 다 가진다"
+    },
+    {
+      "path": "src/hwpx/_document/ns/__init__.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "11개 도메인 네임스페이스 레지스트리. 경계는 capabilities._CAPABILITY_AREAS 에서 유도했다"
+    },
+    {
+      "path": "src/hwpx/_document/ns/_base.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "네임스페이스 공통 베이스 — 문서 하나를 붙들고 소유 모듈로 위임하는 무상태 표면"
+    },
+    {
+      "path": "src/hwpx/_document/ns/fields.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "doc.fields 도메인 네임스페이스 — 5.x 루트 표면의 해당 축을 위임으로 재노출"
+    },
+    {
+      "path": "src/hwpx/_document/ns/media.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "doc.media 도메인 네임스페이스 — 5.x 루트 표면의 해당 축을 위임으로 재노출"
+    },
+    {
+      "path": "src/hwpx/_document/ns/notes.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "doc.notes 도메인 네임스페이스 — 5.x 루트 표면의 해당 축을 위임으로 재노출"
+    },
+    {
+      "path": "src/hwpx/_document/ns/page.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "doc.page 도메인 네임스페이스 — 5.x 루트 표면의 해당 축을 위임으로 재노출"
+    },
+    {
+      "path": "src/hwpx/_document/ns/parts.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "doc.parts 도메인 네임스페이스 — 5.x 루트 표면의 해당 축을 위임으로 재노출"
+    },
+    {
+      "path": "src/hwpx/_document/ns/refs.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "doc.refs 도메인 네임스페이스 — 5.x 루트 표면의 해당 축을 위임으로 재노출"
+    },
+    {
+      "path": "src/hwpx/_document/ns/shapes.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "doc.shapes 도메인 네임스페이스 — 5.x 루트 표면의 해당 축을 위임으로 재노출"
+    },
+    {
+      "path": "src/hwpx/_document/ns/styles.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "doc.styles 도메인 네임스페이스 — 5.x 루트 표면의 해당 축을 위임으로 재노출"
+    },
+    {
+      "path": "src/hwpx/_document/ns/tables.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "doc.tables 도메인 네임스페이스 — 5.x 루트 표면의 해당 축을 위임으로 재노출"
+    },
+    {
+      "path": "src/hwpx/_document/ns/text.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "doc.text 도메인 네임스페이스 — 5.x 루트 표면의 해당 축을 위임으로 재노출"
+    },
+    {
+      "path": "src/hwpx/_document/ns/tracking.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "doc.tracking 도메인 네임스페이스 — 5.x 루트 표면의 해당 축을 위임으로 재노출"
+    },
+    {
+      "path": "src/hwpx/capabilities.py",
+      "disposition": "core",
+      "approvedBy": "059-agent-contract-surface/P1",
+      "rationale": "machine-readable self-description of the installed core (extras probe via find_spec, live surface census, contract documents and schemas); no env reads, no oracle claims — those stay application-side"
+    },
+    {
+      "approvedBy": "054-equation-authoring/P1",
+      "disposition": "core",
+      "path": "src/hwpx/equation/authoring.py",
+      "rationale": "authoring direction of the equation vocabulary: LaTeX -> EqEdit conversion and the hp:equation size heuristic live beside the reader (eqedit.py) as reusable HWPX format behavior; refuses outside the verified token set instead of approximating"
+    },
+    {
+      "approvedBy": "054-equation-authoring/P1",
+      "disposition": "core",
+      "path": "src/hwpx/equation/measure.py",
+      "rationale": "hp:equation box and baseLine measure used by authoring.py's size estimate and add_equation: lays an EqEdit script out as boxes by its structure (characters by kind, fractions, scripts, roots, big operators and limits, matrices, piles, line breaks) beside the reader (eqedit.py) as reusable HWPX format behavior"
+    },
+    {
+      "path": "src/hwpx/model.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "stable 메서드가 반환하는 oxml 클래스의 계약 이름(별칭 재수출). 래퍼가 아니라 같은 객체이며, 계약은 tests/data/model_surface.json 의 멤버 allowlist다 — 'oxml은 비공개인데 stable이 반환한다'는 5.x 자기모순의 해소"
+    },
+    {
+      "path": "src/hwpx/objects/__init__.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-A",
+      "rationale": "add_* 가 반환하는 도메인 객체와 결과 dataclass 의 자리. 6.0 반환 규약(생성 객체 1종)의 소유 패키지"
+    },
+    {
+      "path": "src/hwpx/objects/binary_item.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-C",
+      "rationale": "BinaryItem — add_image/list_images 가 반환하는 BinData 항목의 라이브 뷰. str(item)==item_id 이주 완충으로 5.x str 반환을 대체한다"
+    },
+    {
+      "path": "src/hwpx/objects/checkbox.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-C",
+      "rationale": "CheckBox — add_check_box/set_check_box/list_check_boxes 가 반환하는 hp:checkBtn 라이브 뷰. checked 속성이 settable이라 set_check_box 별도 동사가 소멸한다"
+    },
+    {
+      "path": "src/hwpx/objects/form_field.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-C",
+      "rationale": "FormField(+FieldLocation·FieldParameter) — add_form_field/fill_form_field/list_form_fields 가 반환하는 누름틀 라이브 뷰. id/prompt/type 3쌍 별칭과 5개 인덱스 키를 각 1개로 수렴한다"
+    },
+    {
+      "path": "src/hwpx/objects/highlight.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.2/highlight-authoring",
+      "rationale": "Highlight — doc.text.highlight/highlights 가 반환하는 markpenBegin/markpenEnd 구간의 순수 결과 페이로드. TrackedChange 와 같은 frozen dataclass + to_dict() 하우스 컨벤션"
+    },
+    {
+      "path": "src/hwpx/objects/results.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-C",
+      "rationale": "순수 결과 dataclass 8종(FieldFillResult·PictureReplacement·ListFormatResult·ParagraphFormatResult·PageSetup 외) — frozen=True + to_dict() 하우스 컨벤션(mutation_report.py)을 따르는 fields/media/layout 반환 규약의 소유 모듈"
+    },
+    {
+      "path": "src/hwpx/objects/tracked.py",
+      "disposition": "core",
+      "approvedBy": "062-engine-surface/WP-C",
+      "rationale": "TrackedChange·TrackedReplacement — add_track_change/add_tracked_insert/delete/replace 가 반환하던 int/tuple[int,int] 를 대체한다. __int__ 미보유로 암묵 변환을 금지한다"
+    },
+    {
+      "path": "src/hwpx/oxml/color.py",
+      "disposition": "core",
+      "approvedBy": "S-049/P3",
+      "rationale": "colour-family classification over HWPX textColor; body_patch matches charPr entries by family and the application-side guidance scanner classifies the same way, so one implementation lives here"
+    },
+    {
+      "path": "src/hwpx/oxml/settings.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.1/document-options-and-compatibility",
+      "rationale": "settings.xml (ha:HWPApplicationSetting) read model — package/OXML part parsing alongside header.py/simple_parts.py, no application workflow or policy"
+    },
+    {
+      "path": "src/hwpx/oxml/header_compat.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.6/train-23-document-options-authoring",
+      "rationale": "hh:compatibleDocument/layoutCompatibility/docOption/paraPr-autoSpacing write surface — the authoring counterpart to cycle 6.1's read-only settings.py/header.py models, package/OXML part parsing plus paraPr editing, no application workflow or policy. Free functions rather than HwpxOxmlHeader methods because header_part.py's owner file sits at its 1600-line modularization cap (1599/1600 measured before this module existed) — same pattern as objects.py hosting HwpxOxmlParagraph's shape-authoring methods when paragraph.py was similarly capped"
+    },
+    {
+      "path": "src/hwpx/oxml/version_part.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.4/part-hierarchy-read-models",
+      "rationale": "version.xml (hv:HCFVersion) read model — same settings.py-idiom package/OXML part parsing, no application workflow or policy. Reverse-engineered from the full vendored corpus (47/47); the vendored 2024-draft OWPML schema's root name/namespace do not match real output"
+    },
+    {
+      "path": "src/hwpx/oxml/master_page.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.4/part-hierarchy-read-models",
+      "rationale": "masterpage.xml (unnamespaced masterPage root) read model — same settings.py-idiom package/OXML part parsing, no application workflow or policy. Reverse-engineered from the one real corpus example; the vendored 2024-draft OWPML schema's namespace does not match real output"
+    },
+    {
+      "path": "src/hwpx/oxml/history_part.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.4/part-hierarchy-read-models",
+      "rationale": "history.xml (hhs:*) read model — same settings.py-idiom package/OXML part parsing, no application workflow or policy. Schema-only (zero real corpus examples found across the vendored corpus and ~250 accessible personal Hancom documents); labeled unverified in the module docstring"
+    },
+    {
+      "path": "src/hwpx/plan/__init__.py",
+      "disposition": "core",
+      "approvedBy": "059-agent-contract-surface/P1",
+      "rationale": "declarative composition of the existing byte-splice edit vocabulary with static validation, in-memory chaining and one atomic write; reusable format behavior over core primitives, no workflow/profile/policy"
+    },
+    {
+      "path": "src/hwpx/plan/_execute.py",
+      "disposition": "core",
+      "approvedBy": "059-agent-contract-surface/P1",
+      "rationale": "all-or-nothing executor: chains existing ops on bytes, owns the single atomic write because the splice family publishes even on gate failure"
+    },
+    {
+      "path": "src/hwpx/plan/_model.py",
+      "disposition": "core",
+      "approvedBy": "059-agent-contract-surface/P1",
+      "rationale": "edit-plan/v1 and plan-report/v1 dataclasses beside mutation_report.py, same frozen/to_dict house contract"
+    },
+    {
+      "path": "src/hwpx/plan/_schema.py",
+      "disposition": "core",
+      "approvedBy": "059-agent-contract-surface/P1",
+      "rationale": "live-built JSON Schemas for the plan contracts, op enum sourced from PLAN_OPS so vocabulary drift is structurally impossible"
+    },
+    {
+      "path": "src/hwpx/plan/_validate.py",
+      "disposition": "core",
+      "approvedBy": "059-agent-contract-surface/P1",
+      "rationale": "static plan validation and the PLAN_OPS single source of truth for the op vocabulary"
+    },
+    {
+      "path": "src/hwpx/quality/rendering.py",
+      "disposition": "core",
+      "approvedBy": "S-096/P2",
+      "rationale": "renderer-neutral Protocol, edit mask and report contracts invert the former quality-to-visual runtime dependency"
+    },
+    {
+      "path": "src/hwpx/tools/document_merge.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.9/train-33-document-merge",
+      "rationale": "header-owned shared-resource id remapping (charPr/paraPr/style/borderFill/tabPr/numbering/bullet/memoPr/fontfaces) and structural id refresh for copying another HWPX document's body into an open document -- same shape as mail_merge.py/doc_diff.py: format-level structural behavior only, no application batch/workflow policy"
+    },
+    {
+      "path": "src/hwpx/oxml/dutmal_compose.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.9/train-34-dutmal-compose",
+      "rationale": "hp:dutmal/hp:compose authoring (add_dutmal/add_composed_character) -- format-level HwpxOxmlParagraph shape-authoring overflow module, same reasoning as objects.py's own shape-authoring split (paragraph.py's owner file at its 1600-line modularization cap, and objects.py itself has no headroom left either)"
+    },
+    {
+      "path": "src/hwpx/oxml/section_layout.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.11/train-44-add-section-first-run-fix",
+      "rationale": "add_section()'s renderable-layout carrier lookup (has_positive_page_geometry/renderable_section_carriers/copy_renderable_section_layout) -- moved out of document_parts.py verbatim (format-level structural helper, no behavior change beyond the first-run-assumption fix itself) because document_parts.py had only 2 lines of headroom left under the 1600-line owner-file cap; same overflow-module pattern as header_compat.py/dutmal_compose.py. Also holds the section manifest ids (number_section_ids/new_section_names: section0, section1, ... in document order after add_section, remove_section and on save) for the same headroom reason"
+    },
+    {
+      "path": "src/hwpx/oxml/document_metadata.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.12/train-48-document-metadata",
+      "rationale": "Contents/content.hpf's opf:metadata (title/creator/subject/description/keyword/lastsaveby/CreatedDate/ModifiedDate/date) read model -- same schema-undeclared-part idiom as settings.py/version_part.py (67-fixture real-corpus reverse engineering is the truth source, not the OWPML schema, since opf:/dc: metadata isn't HWPML at all). The write side lives on HwpxPackage itself (opc/package.py), not here, since it must share the exact manifest_tree()/_persist_manifest() object add_manifest_item/remove_manifest_item already use"
+    },
+    {
+      "path": "src/hwpx/oxml/drop_cap.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.12/train-48-drop-cap",
+      "rationale": "hp:rect dropcapstyle=TripleLine authoring (add_drop_cap) -- format-level HwpxOxmlParagraph shape-authoring overflow module, same reasoning as dutmal_compose.py (paragraph.py's owner file has no headroom left for a bespoke ~140-line shape builder). dropcapstyle lives on AbstractShapeObjectType (shared by every embeddable shape), not hh:paraPr, and the real-corpus structure (transparent rect + nested drawText/subList carrying the enlarged character) differs enough from the generic non-treat-as-char shape builder's defaults (horzRelTo/flowWithText/curSz) that reuse of objects.py's rectangle builder was not viable -- a dedicated module, same as the schema-vs-code cross-reference this whole family of overflow modules already follows"
+    },
+    {
+      "path": "src/hwpx/oxml/numbering_kinds.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.13/train-48-outline-numbering",
+      "rationale": "HwpxOxmlHeader.ensure_numbering's full body (bullet/number/outline kinds) -- moved out verbatim (same pattern as section_layout.py's 'moved out, no behavior change beyond the addition itself' precedent) because header_part.py had no headroom left under the 1600-line owner-file cap once the new 'outline' kind (train 48, gap ㊻ #3-5: 개요 번호 모양·적용/해제·수준 증감) was added. The number/outline branches are deduplicated into one shared helper (_numbering_refs_for_kind) since they differ only in the hh:heading type they reference -- outline reuses the exact hh:numbering/hh:paraHead mechanism v14's authored-listformat batch already render-verified for number/bullet, just under a different heading_type, so no new structural guess was made"
+    },
+    {
+      "path": "src/hwpx/oxml/master_page_authoring.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.13/train-48-master-page-write",
+      "rationale": "add_master_page (Contents/masterpageN.xml part creation + opf:item manifest registration, no spine itemref needed since master pages aren't reading-order parts) -- opens the write side HwpxOxmlMasterPage's own docstring explicitly deferred (read-only, cycle 6.4 train 15's read=none resolution scope). New module from the start rather than added inline to document_parts.py (only ~82 lines of headroom there, this needed more to build safely without repeating header_part.py's mid-train overflow). Reverse-engineered from the single real master-page sample (error__20250808__...hwpx): the part filename, manifest opf:item id, masterPage root's own id, and a section's hp:masterPage/@idRef all share one string (\"masterpageN\"); textWidth/textHeight on the inner hp:subList stay at the honest \"0\" default (same as every other subList builder) since a single sample gives no basis to reverse the page-geometry formula the real value came from. Section-side reference wiring (hp:masterPage/@idRef append + masterPageCnt sync) lives in section_format.py instead (SectionProperties.add_master_page_reference), not here, since it needs no new module of its own"
+    },
+    {
+      "path": "src/hwpx/oxml/field_marks.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.13/train-48-date-field-proofreading-mark",
+      "rationale": "add_date_field (hp:fieldBegin type=DATE) + add_proofreading_mark (hp:fieldBegin type=PROOFREADING_MARKS_SIGN) -- paragraph.py's shape/field-authoring overflow destination hit exactly 1600 lines with the two thin delegator methods added (zero headroom left, flagged as a next-cycle chip: this file needs a real extraction pass before more paragraph-level authoring lands). Reverse-engineered from team-lead's real-Hancom GUI probe gold samples (not vendored corpus -- synthetic, scratch-path only), unlike add_hyperlink's established 3-run charPr-isolation pattern, both fields pack ctrl/t children into a single run (matches the observed gold structure exactly; no isolation needed since neither field's display text carries special formatting). DATE field scope is deliberately narrow: only the one observed date_format (\"YYYY년 M월 D일\") is supported since its Command preview-string convention can't be reverse-engineered from a single sample, and cached_text is caller-supplied (this module is not a date formatter). Proofreading-mark field similarly narrows to the one confirmed $RevisionSign index (mark=\"space\"=1) out of the real dialog's 21 total kinds. A genuine schema-vs-reality deviation surfaced during this reverse-engineering: the schema declares FieldType=PROOFREADING_MARKS but real Hancom emits PROOFREADING_MARKS_SIGN -- registered as DEV-043 in docs/owpml-deviations.md. 6.14 train 48/debt3 later added add_path_field (type=PATH) as a third class-attribute delegator here (no new module needed for it -- this file still had headroom)"
+    },
+    {
+      "path": "src/hwpx/oxml/note_authoring.py",
+      "disposition": "core",
+      "approvedBy": "cycle-6.14/train-48-debt3-paragraph-headroom",
+      "rationale": "add_footnote/add_endnote + footnotes/endnotes properties -- pure move out of paragraph.py, verbatim (no behavior change), to restore real headroom on that owner file (it sat at exactly 1600 lines after train 48/㊽b's PATH field delegator, flagged as a debt-repayment chip by team-lead when accepting that train). Same class-attribute-assignment escape valve as dutmal_compose.py/objects.py/field_marks.py -- paragraph.py now has 148 lines of headroom (1452/1600) instead of 5. The two class-level dicts (_NOTE_STYLE_NAMES/_NOTE_STYLE_FALLBACK) that were HwpxOxmlParagraph class attributes became plain module-level constants here, referenced directly instead of through self -- the only shape change, not a behavior change (self._NOTE_STYLE_NAMES[tag] and _NOTE_STYLE_NAMES[tag] read the identical dict)."
+    },
+    {
+      "path": "src/hwpx/oxml/_paragraph_text_edit.py",
+      "disposition": "core",
+      "approvedBy": "bounded-text-edit-implementation-review",
+      "rationale": "Format-level helpers for unambiguous plain-text node selection and run/control preservation. Extracted from paragraph.py to keep its complexity bounded; no application workflow, renderer, or agent policy."
+    },
+    {
+      "path": "src/hwpx/oxml/table_merge.py",
+      "disposition": "core",
+      "approvedBy": "hancom-merge-cells-grid",
+      "rationale": "What a cell merge leaves behind in a table's grid: collapse_merged_grid() removes the rows a merge left without cells and the columns no cell starts at, as Hancom's merge does (Hancom does not open a table with an empty hp:tr), and moves the cell addresses, spans and cell zones past them back. A new module rather than more table.py lines: with the merge fix that owner file would pass the 1,600-line cap; HwpxOxmlTable.merge_cells calls it. Format-level only."
+    },
+    {
+      "path": "src/hwpx/oxml/hyperlink_form.py",
+      "disposition": "core",
+      "approvedBy": "hancom-hyperlink-target-parameters",
+      "rationale": "Hancom's storage of a hyperlink field target: hyperlink_parameters() writes the hp:parameters Hancom reads (Command with : ? ; # backslash-escaped and a ;kind;0;0 tail, Path, Category, TargetType, DocOpenType -- the form Hancom writes for web, mail and bookmark links) and hyperlink_target() reads a target back (Path, else the unescaped Command head, else @name). A new module rather than more paragraph.py lines (1,584/1,600 owner-file cap); paragraph.add_hyperlink, paragraph.hyperlinks, Markdown export and the text extractor all call it, so the three readers that disagreed now read one way. Format-level only: no renderer, application workflow or agent policy."
+    },
+    {
+      "path": "src/hwpx/oxml/table_sizes.py",
+      "disposition": "core",
+      "approvedBy": "hancom-distribute-cell-width",
+      "rationale": "How a table shares out its width and height among its cells: the bodies of HwpxOxmlTable.set_column_widths, equalize_column_widths (Hancom's distribute-cell-width rule: each row splits the table width among its own cells, the width rounded up to a common multiple of every row's cell count, the column grid rebuilt from the new cell edges) and equalize_row_heights; and the bodies of HwpxOxmlTableCell.margins/set_margins (the effective inner margins: the table's hp:inMargin unless the cell's hasMargin is on, then its hp:cellMargin), assigned onto the cell class as attributes. That margin rule (effective_cell_margin_source / cell_margins_of) is the one every other reader uses -- form fit, the nested-table default width, the table height bound, the layout preview, the template analyzer and the byte-level cell fill -- so the engine reports one value per cell. grid_widths_of gives each cell's width on the column grid Hancom lays text out on (columns stacked from the left, each ending at the farthest of its cells' starts plus widths and the cell spacing), read by the page estimate and form fit. A new module rather than more table.py lines: the open table fixes together would take that owner file past the 1,600-line cap; the table methods keep their documentation and delegate. Format-level only."
+    },
+    {
+      "path": "src/hwpx/oxml/paragraph_heading.py",
+      "disposition": "core",
+      "approvedBy": "hancom-outline-levels-8-to-10",
+      "rationale": "The hh:heading of a paragraph shape as Hancom writes it: outline levels 8 to 10 (level 7 to 9) exist only in the 2016 paragraph namespace, so Hancom writes such a heading in an hp:switch whose hp:case holds it and whose hp:default says NONE (the 개요 8 to 개요 10 styles of a new document are written so). set_paragraph_heading() writes a heading that way (header_part.ensure_paragraph_format and the list paragraph shapes call it) and paragraph_heading() reads one, own or in a switch (the header model, the exporter's list labels and the list shape lookup call it), so writers and readers agree. A new module rather than more header_part.py lines (1,598/1,600 owner-file cap). Format-level only."
+    },
+    {
+      "path": "src/hwpx/oxml/header_fonts.py",
+      "disposition": "core",
+      "approvedBy": "style-font-border-reads",
+      "rationale": "Font table and border-fill reads over the live Contents/header.xml (doc.styles.fonts/font_face/border_fill_info) plus replace_font, which swaps one hh:font face for another per hh:fontface block and remaps every hh:charPr/hh:fontRef so no other reference changes the face it names. Reusable HWPX format behavior a converter (e.g. HWPX to DOCX) needs; no renderer, application workflow or agent policy. Free functions over HwpxOxmlHeader rather than methods because header_part.py sits at 1598/1600 lines -- same pattern as header_compat.py."
+    },
+    {
+      "path": "src/hwpx/_moved_modules.py",
+      "disposition": "core",
+      "approvedBy": "moved-module-import-guidance",
+      "rationale": "Import-time guidance for the module names removed in 5.0: a finder appended to sys.meta_path raises ModuleNotFoundError naming the python-hwpx-automation module and the migration guide. It never imports the companion and restores no removed path; the top-level names come from hwpx._MOVED_TO_COMPANION."
+    },
+    {
+      "path": "src/hwpx/oxml/shape_position.py",
+      "disposition": "core",
+      "approvedBy": "shape-position-reference-frames",
+      "rationale": "HwpxOxmlShape.set_position with hp:pos reference frames and alignment (vertRelTo/horzRelTo/vertAlign/horzAlign) plus the hp:subList/@vertAlign check for set_draw_text -- the OWPML enumerations from DevDoc/OWPML SCHEMA/ParaList XML schema.xml (AbstractShapeObjectType/pos, ParaListType), validated before any mutation. A new module rather than more objects.py lines (1,583/1,600 owner-file cap); set_position is attached to HwpxOxmlShape as a plain class attribute, the same escape valve as dutmal_compose.py. Format-level only: no renderer, application workflow or agent policy."
+    },
+    {
+      "path": "src/hwpx/hwp5/__init__.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "HWP 5.0 (.hwp) subpackage: converts between the HWP 5.0 compound file and the OWPML parts of an HWPX package so HwpxDocument opens and saves .hwp with the same document model and API. Format-level only: no renderer, application workflow or agent policy."
+    },
+    {
+      "path": "src/hwpx/hwp5/bodytext.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "HWP 5.0 BodyText paragraphs: PARA_HEADER fields, the paragraph text split into plain text and char/inline/extended control characters, char shape runs and the CTRL_HEADER records a paragraph owns. Format-level decoding only."
+    },
+    {
+      "path": "src/hwpx/hwp5/cfb.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "Compound File Binary reader and writer for the HWP 5.0 container, written from the public [MS-CFB] specification with the standard library only: bounded sector-chain reading that refuses truncated, looping or out-of-file chains, and version 3 writing with a red-black directory tree per storage."
+    },
+    {
+      "path": "src/hwpx/hwp5/docinfo.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "HWP 5.0 DocInfo id-mapping table (bin data, fonts per language, border fills, char and para shapes, tab definitions, numbering, bullets, styles, memo shapes) and the check that each count matches the records present."
+    },
+    {
+      "path": "src/hwpx/hwp5/errors.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "Builders for Hwp5Error, the typed error with hwp5-* codes for HWP 5.0 input that is protected (password, distribution, DRM), damaged, not HWP 5.0 or beyond a parsing limit, and for content the HWP 5.0 writer cannot express, plus Hwp5ConversionReport. Hwp5Error and Hwp5ConversionWarning are defined in hwpx.errors so that importing hwpx does not load this package, and re-exported here."
+    },
+    {
+      "path": "src/hwpx/hwp5/fileheader.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "The 256-byte HWP 5.0 FileHeader stream: signature, version and the property flags (compression, password, distribution, DRM, certificate encryption and the rest)."
+    },
+    {
+      "path": "src/hwpx/hwp5/reader.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "Opens an HWP 5.0 file into its FileHeader, DocInfo and section record trees, and refuses protected, damaged and non-HWP 5.0 files with stable error codes before any record is interpreted."
+    },
+    {
+      "path": "src/hwpx/hwp5/records.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "HWP 5.0 record layer: tag/level/size headers including the extended size word, the level tree, bounded raw-deflate stream decompression, and record serialization for writing."
+    },
+    {
+      "path": "src/hwpx/hwp5/binary.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "Little-endian field cursor and builder for HWP 5.0 record payloads; running past a payload is reported as damage."
+    },
+    {
+      "path": "src/hwpx/hwp5/header_xml.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "HWP 5.0 DocInfo to Contents/header.xml: fonts, border fills, char and para shapes, tabs, numbering, bullets, styles and memo shapes, with ids kept one-to-one with the records."
+    },
+    {
+      "path": "src/hwpx/hwp5/owpml.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "OWPML namespaces, colour conversion and the value tables that map HWP 5.0 record codes to OWPML tokens, shared by the reading and writing directions so they cannot drift apart."
+    },
+    {
+      "path": "src/hwpx/hwp5/package.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "Assembles an HWP 5.0 document as HWPX package parts (mimetype, version, container, content.hpf, header, sections, settings, preview text, BinData) and zips them for the ordinary HWPX reader."
+    },
+    {
+      "path": "src/hwpx/hwp5/section_xml.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "HWP 5.0 BodyText sections to Contents/section<N>.xml: paragraphs, runs, text and its inline controls, section and column definitions, tables, headers, footers and notes; controls it does not convert are counted in a conversion report instead of being dropped silently."
+    },
+    {
+      "path": "src/hwpx/hwp5/summary.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "Reads the HWP 5.0 document summary property set (title, author, subject, keywords, comments, dates) for the package metadata; a malformed set yields no properties."
+    },
+    {
+      "path": "src/hwpx/hwp5/controls.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "Field codecs shared by HWP 5.0 reading and writing for BodyText controls: section and column definitions, page definition, note shape, page border fill, the common object header, the TABLE record, cell, caption, header/footer and note list headers; each re-encodes its payload byte for byte."
+    },
+    {
+      "path": "src/hwpx/hwp5/docinfo_writer.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "Contents/header.xml to HWP 5.0 DocInfo records (the inverse of header_xml): fonts, border fills, char and para shapes, tabs, numbering, bullets, styles, memo shapes and the id mapping table, in the record order and layouts of the current format version."
+    },
+    {
+      "path": "src/hwpx/hwp5/section_writer.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "Contents/section<N>.xml to HWP 5.0 BodyText records (the inverse of section_xml): paragraphs, text and inline controls, char shape runs, line segments, section and column definitions, tables with captions and cells, headers, footers and notes; elements it cannot write are counted so the save can refuse them."
+    },
+    {
+      "path": "src/hwpx/hwp5/shapes.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "Field codecs of HWP 5.0 drawing objects: the shape component (kind, group placement, sizes, flip, rotation, matrices), the line, fill and shadow of a drawn shape, container children, rectangle, ellipse, arc, polygon and line geometry and the text box list header; each re-encodes its payload byte for byte."
+    },
+    {
+      "path": "src/hwpx/hwp5/section_common.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "Pieces the HWP 5.0 section readers share: the conversion report of what was not converted or has no OWPML form, the common properties of objects (tables, pictures, shapes, equations) as OWPML attributes and elements, and paragraph list attributes."
+    },
+    {
+      "path": "src/hwpx/hwp5/shape_xml.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "HWP 5.0 drawing objects to OWPML shape elements (the reading half of hwp5.shapes): rectangles, ellipses, arcs, polygons, lines, containers and pictures with placement, matrices, line, fill and shadow, text boxes, captions and parameter sets; kinds it does not convert are reported."
+    },
+    {
+      "path": "src/hwpx/hwp5/writer.py",
+      "disposition": "core",
+      "approvedBy": "owner-hwp5-core-2026-09-23",
+      "rationale": "Writes HWPX package parts as an HWP 5.0 file: finds the header, sections and embedded binaries through the manifest, builds and compresses the record streams and the compound file, and refuses with hwp5-write-unsupported before writing when content cannot be expressed."
+    },
+    {
+      "path": "src/hwpx/layout/pages.py",
+      "disposition": "core",
+      "approvedBy": "owner-page-estimate-2026-09-29",
+      "rationale": "Experimental page estimate (re-exported from hwpx.experimental): follows each body paragraph onto its page and column from the document alone -- lines from a paragraph's valid layout cache or FormFit line breaking, line and paragraph spacing, page/column breaks and paragraph break rules, equal columns, inline and flowing tables, top-and-bottom objects and footnotes -- and reports anything else as unsupported with a reason. Reads OXML only; writes nothing."
+    },
+    {
+      "path": "src/hwpx/oxml/curves.py",
+      "disposition": "core",
+      "approvedBy": "shape-curves-and-connectors",
+      "rationale": "HwpxOxmlParagraph.add_curve and add_connector: builds hp:curve (CURVE segments through the given points, the box of the Catmull-Rom curve through them, the points relative to that box) and hp:connectLine (STRAIGHT or STROKE, NOARROW) whose ends sit at the middle of a side of two floating objects placed in the same frame, with the connector's start/end object references. A new module rather than more objects.py lines (the 1,600-line owner-file cap); the two builders are attached to HwpxOxmlParagraph as plain class attributes, the same escape valve as shape_position.py and drop_cap.py. Format-level only: no renderer, application workflow or agent policy."
+    },
+    {
+      "path": "src/hwpx/form_fit/_glyph_table.py",
+      "disposition": "core",
+      "approvedBy": "formfit-glyph-widths",
+      "rationale": "FormFit glyph widths beyond measure._GLYPHS: per face, the design advance of each glyph of the KS X 1001 symbols, the full-width forms and eight common Unicode blocks, read from the font files, and the face Hancom lays a glyph out from when a face lacks it. Data only; imports nothing."
+    }
+  ],
+  "removed": [
+    {
+      "glob": "src/hwpx/exam/**",
+      "removedIn": "5.0.0",
+      "newOwner": "hwpx_automation.office.exam",
+      "replacement": [
+        "MCP compose_exam / verify_question_splits tools"
+      ],
+      "rationale": "exam-specific parsing, measurement and composition are application workflow"
+    }
+  ]
+}

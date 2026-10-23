@@ -1,0 +1,543 @@
+[build-system]
+requires = ["setuptools==84.0.0", "wheel==0.48.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python-hwpx"
+version = "6.8.0"
+description = "한글 없이 HWPX 문서를 열고, 편집하고, 생성하고, 검증하는 Python 문서 라이브러리"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+requires-python = ">=3.10"
+authors = [
+    { name = "python-hwpx Maintainers" },
+]
+keywords = ["hwp", "hwpx", "hancom", "opc", "xml", "document-automation", "validation", "template"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Text Processing :: Markup :: XML",
+    "Typing :: Typed",
+]
+dependencies = [
+    "lxml>=4.9,<7",
+]
+
+[project.optional-dependencies]
+# 5.0에서 core는 PDF도 이미지도 읽지 않는다. 렌더 백엔드와 word-box 추출은
+# 주입받는 계약이고, 그 스택은 companion 계층이 소유한다. 이름은 기존 설치가
+# `python-hwpx[visual]`로 깨지지 않도록 남기되 아무것도 끌어오지 않는다.
+visual = []
+# Excel(.xlsx/.xlsm) 명부 ingestion for mail_merge. Lazy-imported; absent => clear error.
+xlsx = [
+    "openpyxl>=3.1",
+]
+# Document preview viewer equation rendering: LaTeX -> MathML. Optional; without
+# it the preview fails closed to a LaTeX code block instead of dropping equations.
+preview = [
+    "latex2mathml>=3.77",
+]
+dev = [
+    "build>=1.0",
+    "twine>=4.0",
+    "pytest>=7.4",
+    "latex2mathml>=3.77",
+]
+test = [
+    "build>=1.0",
+    "numpy>=1.26",
+    "openpyxl>=3.1",
+    "pillow>=10.0",
+    "pytest>=7.4",
+    "pytest-cov>=5.0",
+    "pyyaml>=6.0,<7",
+    "ruff>=0.12",
+    "latex2mathml>=3.77",
+]
+typecheck = [
+    "mypy>=1.10",
+    "pyright>=1.1.390",
+]
+
+[project.urls]
+Homepage = "https://github.com/airmang/python-hwpx"
+Documentation = "https://airmang.github.io/python-hwpx/"
+Issues = "https://github.com/airmang/python-hwpx/issues"
+
+[project.scripts]
+# The `hwpx` application CLI moved to python-hwpx-automation, which declares the
+# name in the train that raises its core floor to 5.0 — so no valid install ever
+# has two declarers of it. `hwpx-conformance` is gone too: its package is
+# repository QA and no longer ships, and a console script pointing into an
+# excluded package would install as a command that cannot start.
+hwpx-unpack = "hwpx.tools.archive_cli:unpack_main"
+hwpx-pack = "hwpx.tools.archive_cli:pack_main"
+hwpx-validate = "hwpx.tools.validator:main"
+hwpx-validate-package = "hwpx.tools.package_validator:main"
+hwpx-page-guard = "hwpx.tools.page_guard:main"
+hwpx-analyze-template = "hwpx.tools.template_analyzer:main"
+hwpx-text-extract = "hwpx.tools.text_extract_cli:main"
+hwpx-repair = "hwpx.tools.repair:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+include-package-data = true
+# Namespace-aware discovery. hwpx/opc and hwpx/data carry no __init__.py, so a
+# plain find_packages misses them, and they only ever shipped because
+# include-package-data swept them in as data files of hwpx. That same sweep kept
+# hwpx/benchmark and hwpx/conformance in the wheel after they were excluded from
+# the package list — one mechanism, helping in one place and hurting in the other.
+# The list is deliberately exact. A wildcard made any new directory below
+# ``src/hwpx`` publishable without a packaging review, which is the opposite of
+# the library/application boundary. Namespace packages (``opc`` and ``data``)
+# are valid explicit entries.
+packages = [
+    "hwpx",
+    "hwpx._document",
+    # 6.0: 루트 표면 34 뒤의 11개 도메인 네임스페이스. 이 줄이 없으면 휠이
+    # `hwpx._document.ns` 없이 나가고 `import hwpx` 자체가 깨진다 — 소스
+    # 트리에서만 통과하는 종류의 결함이라 doc-fence 휠 실행 게이트가 잡았다.
+    "hwpx._document.ns",
+    "hwpx.data",
+    "hwpx.equation",
+    "hwpx.form_fit",
+    # HWP 5.0(.hwp) 읽기·쓰기. `hwpx/__init__.py`가 이 패키지를 가져오므로 빠지면
+    # 휠에서 `import hwpx`가 깨진다.
+    "hwpx.hwp5",
+    "hwpx.ingest",
+    "hwpx.layout",
+    # 6.0: add_* 가 반환하는 도메인 객체·결과 dataclass (WP-C가 채운다).
+    "hwpx.objects",
+    "hwpx.opc",
+    "hwpx.oxml",
+    "hwpx.plan",
+    "hwpx.quality",
+    "hwpx.tools",
+    "hwpx.tools._schemas",
+]
+
+# Only packages that ship. A key here for an excluded or deleted package pulls it
+# back into the wheel: hwpx.conformance was excluded from packages.find and still
+# shipped because this table named it, and hwpx.design no longer exists at all.
+
+# Listed explicitly rather than discovered with an exclude pattern. The exclude
+# form silently failed to keep hwpx.benchmark and hwpx.conformance out of the
+# wheel, and a packaging rule that looks right while shipping the opposite is
+# worse than a longer list. Adding a package here is a deliberate act.
+[tool.setuptools.package-data]
+"hwpx" = ["py.typed"]
+"hwpx.tools" = ["_schemas/*.xsd"]
+"hwpx.data" = ["Skeleton.hwpx", "contract_docs/*.md"]
+
+[tool.pytest.ini_options]
+# scripts/ carries repository QA harnesses that are not library surface — the
+# fuzz loop moved there in 5.0 because it needs the MCP owner's builder, and
+# core must never import a companion layer.
+pythonpath = ["src", "scripts"]
+addopts = "-ra"
+testpaths = ["tests"]
+
+
+[tool.mypy]
+python_version = "3.10"
+# Explicit gradual-migration allowlist: transitive imports enter the gate only
+# after they are added here and made clean themselves.
+follow_imports = "skip"
+files = [
+    "src/hwpx/document.py",
+    "src/hwpx/errors.py",
+    "src/hwpx/mutation_report.py",
+    "src/hwpx/capabilities.py",
+    # 6.14 트레인㊾-1 — pre-existing 49 errors 정리 후 편입(6.12 이전부터의
+    # 기존 부채, f7e4e67 리뷰가 지목). 대부분 _si()가 돌려주는 int|None을
+    # 산술/비교에 바로 쓰던 자리(스키마상 필수 hp:tc 속성이라 실제로는
+    # None일 수 없음 -- assert로 좁힘) + 한 함수 안에서 변수 이름을
+    # re.Match와 int 양쪽으로 재사용하던 자리(이름만 갈라 해소, 동작
+    # 불변) + 람다 기본인자가 오버로드 추론을 깨던 자리(named 중첩
+    # 함수로 치환). 동작 변경 없음(assert 실패는 이전에도 TypeError로
+    # 이미 죽던 자리를 더 명확한 메시지로 바꾼 것뿐).
+    "src/hwpx/table_patch.py",
+    "src/hwpx/plan/__init__.py",
+    "src/hwpx/plan/_model.py",
+    "src/hwpx/plan/_validate.py",
+    "src/hwpx/plan/_execute.py",
+    "src/hwpx/plan/_schema.py",
+    "src/hwpx/equation/__init__.py",
+    "src/hwpx/equation/tokens.py",
+    "src/hwpx/equation/eqedit.py",
+    "src/hwpx/equation/authoring.py",
+    "src/hwpx/equation/mathml.py",
+    "src/hwpx/equation/render.py",
+    "src/hwpx/tools/document_viewer.py",
+    "src/hwpx/tools/mail_merge.py",
+    "src/hwpx/tools/redline.py",
+    "src/hwpx/_document/_units.py",
+    # 6.0 (062-engine-surface WP-A): 새 모듈은 게이트 안에서 태어난다. 이
+    # 목록이 옛 모듈을 점진 편입하는 것이라고 해서, 새로 만드는 것까지 밖에
+    # 둘 이유는 없다.
+    #
+    # 예외 하나: `_document/_legacy.py`. 본문이 5.8.0 `document.py`의 것을
+    # **그대로** 옮긴 것이고(그 자리에서는 타입 청결했다), 믹스인으로 분리된
+    # 탓에 `self`가 `HwpxDocument`가 아니라 `Self@_LegacyFacade`로 좁혀져
+    # 위임 호출 52건이 전부 같은 한 가지 이유로 붉어진다. `self` 주석을 달면
+    # `inspect.signature`가 바뀌어 shim 락의 시그니처 동일성(이주 창의 핵심
+    # 약속)이 깨진다. 7.0에서 파일째 삭제되므로 편입하지 않는다.
+    "src/hwpx/model.py",
+    "src/hwpx/objects/__init__.py",
+    # 6.0 (062-engine-surface WP-C): 반환 규약 소유 모듈 5종 — 같은 이유로
+    # 게이트 안에서 태어난다(위 WP-A 주석 참조).
+    "src/hwpx/objects/binary_item.py",
+    "src/hwpx/objects/checkbox.py",
+    "src/hwpx/objects/form_field.py",
+    "src/hwpx/objects/results.py",
+    "src/hwpx/objects/tracked.py",
+    "src/hwpx/objects/highlight.py",
+    "src/hwpx/_document/_resolve.py",
+    "src/hwpx/_document/headings.py",
+    "src/hwpx/_document/highlight.py",
+    "src/hwpx/_document/ns",
+    "src/hwpx/_document/fields.py",
+    "src/hwpx/_document/layout.py",
+    "src/hwpx/_document/media.py",
+    "src/hwpx/_document/memos.py",
+    "src/hwpx/_document/persistence.py",
+    "src/hwpx/_document/shapes.py",
+    "src/hwpx/_document/tracked.py",
+    "src/hwpx/oxml/_document_impl.py",
+    "src/hwpx/oxml/_document_primitives.py",
+    "src/hwpx/oxml/document.py",
+    "src/hwpx/oxml/document_parts.py",
+    "src/hwpx/oxml/header_part.py",
+    "src/hwpx/oxml/memo.py",
+    "src/hwpx/oxml/numbering.py",
+    "src/hwpx/oxml/objects.py",
+    "src/hwpx/opc/package.py",
+    "src/hwpx/opc/xml_utils.py",
+    "src/hwpx/opc/relationships.py",
+    "src/hwpx/oxml/paragraph.py",
+    "src/hwpx/oxml/run.py",
+    "src/hwpx/oxml/section.py",
+    "src/hwpx/oxml/section_format.py",
+    "src/hwpx/oxml/section_story.py",
+    "src/hwpx/oxml/simple_parts.py",
+    "src/hwpx/oxml/table.py",
+    "src/hwpx/quality/policy.py",
+    "src/hwpx/quality/rendering.py",
+    "src/hwpx/quality/report.py",
+    "src/hwpx/tools/archive_cli.py",
+    "src/hwpx/tools/package_validator.py",
+    "src/hwpx/tools/page_guard.py",
+    "src/hwpx/tools/template_analyzer.py",
+    "src/hwpx/tools/text_extract_cli.py",
+    "src/hwpx/tools/text_extractor.py",
+    "tests/template_automation/helpers.py",
+    "tests/template_automation/generate_fixtures.py",
+    # 6.4: part-hierarchy read models (gap #15) — born in the gate, per the
+    # WP-A rule above.
+    "src/hwpx/oxml/version_part.py",
+    "src/hwpx/oxml/master_page.py",
+    "src/hwpx/oxml/history_part.py",
+    # 6.6 (train 23): document options/compatibility authoring — born in the
+    # gate, per the WP-A rule above.
+    "src/hwpx/oxml/header_compat.py",
+    # 6.9 (train 33): document insertion/merge — born in the gate, per the
+    # WP-A rule above.
+    "src/hwpx/tools/document_merge.py",
+    # 6.9 (train 34): dutmal/compose authoring — born in the gate, per the
+    # WP-A rule above.
+    "src/hwpx/oxml/dutmal_compose.py",
+    # 6.11 (train 44): add_section() layout-carrier lookup, extracted from
+    # document_parts.py (1600-line cap) — born in the gate, per the WP-A
+    # rule above.
+    "src/hwpx/oxml/section_layout.py",
+    # 6.12 (train 48): opf:metadata (content.hpf document properties) read
+    # model — born in the gate, per the WP-A rule above.
+    "src/hwpx/oxml/document_metadata.py",
+    # 6.12 (train 48): drop cap (hp:rect dropcapstyle) shape-authoring
+    # overflow module, extracted from paragraph.py (1600-line cap) — born
+    # in the gate, per the WP-A rule above.
+    "src/hwpx/oxml/drop_cap.py",
+    # 6.13 (train 48): ensure_numbering's full body (bullet/number/outline
+    # kinds), moved out of header_part.py (1600-line cap, no headroom left
+    # once the new "outline" kind was added) — born in the gate, per the
+    # WP-A rule above.
+    "src/hwpx/oxml/numbering_kinds.py",
+    # 6.13 (train 48): master page (바탕쪽) part creation + manifest
+    # registration — new module from the start (document_parts.py had
+    # modest headroom but this needed more than fit safely), per the WP-A
+    # rule above.
+    "src/hwpx/oxml/master_page_authoring.py",
+    # 6.13 (train 48): date field (hp:fieldBegin type=DATE) + proofreading
+    # mark field (type=PROOFREADING_MARKS_SIGN) authoring — new module
+    # from the start; paragraph.py hit exactly 1600 lines with just the
+    # two delegator methods (zero headroom left, resolved by the
+    # extraction below), per the WP-A rule above.
+    "src/hwpx/oxml/field_marks.py",
+    # 6.14 (train 48/debt3): footnote/endnote (각주/미주) authoring moved
+    # out of paragraph.py verbatim (no behavior change) to restore real
+    # headroom -- same escape valve as dutmal_compose.py/objects.py/
+    # field_marks.py above, per the WP-A rule.
+    "src/hwpx/oxml/note_authoring.py",
+    # Grid clean-up after a cell merge (rows left without cells, columns no
+    # cell starts at) moved out of table.py -- born in the gate, per the WP-A rule.
+    "src/hwpx/oxml/table_merge.py",
+    # Hyperlink field target form (Hancom's Command/Path parameters,
+    # written and read in one place) -- born in the gate, per the WP-A rule.
+    "src/hwpx/oxml/hyperlink_form.py",
+    # Table width/height distribution (distribute cell width row by row) moved out
+    # of table.py -- born in the gate, per the WP-A rule.
+    "src/hwpx/oxml/table_sizes.py",
+    # A paragraph shape's heading (outline levels 8 to 10 in Hancom's hp:switch form),
+    # written and read in one place -- born in the gate, per the WP-A rule.
+    "src/hwpx/oxml/paragraph_heading.py",
+    # Floating-shape reference frames (set_position) and shape-text
+    # vertical alignment -- objects.py's overflow module (1600-line cap),
+    # born in the gate, per the WP-A rule.
+    "src/hwpx/oxml/shape_position.py",
+    # Font table and border-fill reads plus replace_font (header.xml) --
+    # born in the gate, per the WP-A rule.
+    "src/hwpx/oxml/header_fonts.py",
+    # HWP 5.0 (.hwp) container and record layer -- born in the gate, per the
+    # WP-A rule.
+    "src/hwpx/hwp5/__init__.py",
+    "src/hwpx/hwp5/bodytext.py",
+    "src/hwpx/hwp5/cfb.py",
+    "src/hwpx/hwp5/docinfo.py",
+    "src/hwpx/hwp5/errors.py",
+    "src/hwpx/hwp5/fileheader.py",
+    "src/hwpx/hwp5/reader.py",
+    "src/hwpx/hwp5/records.py",
+    "src/hwpx/hwp5/binary.py",
+    "src/hwpx/hwp5/header_xml.py",
+    "src/hwpx/hwp5/owpml.py",
+    "src/hwpx/hwp5/package.py",
+    "src/hwpx/hwp5/section_xml.py",
+    "src/hwpx/hwp5/summary.py",
+    "src/hwpx/hwp5/controls.py",
+    "src/hwpx/hwp5/docinfo_writer.py",
+    "src/hwpx/hwp5/section_writer.py",
+    "src/hwpx/hwp5/shapes.py",
+    "src/hwpx/hwp5/section_common.py",
+    "src/hwpx/hwp5/shape_xml.py",
+    "src/hwpx/hwp5/writer.py",
+]
+# 칩 후보 1 ✅ 6.14 트레인㊾-1에서 해소: `src/hwpx/table_patch.py`(2073줄,
+# 6.12 트레인㊸ 갭⑤ 정리 시 team-lead가 지목, f7e4e67 리뷰) — 위 files
+# 리스트에 이미 편입돼 있다(pre-existing 49 errors 정리, 이 섹션 첫
+# 항목 주석 참조). 이 블록 자체는 이력으로 남긴다.
+#
+# 다음 사이클 칩 후보 2(6.13 트레인㊼, titleMark 재프로브 부산물로
+# team-lead가 지목): `HwpxDocument.add_heading`(document.py) →
+# `_headings.bind_outline_level` → `_document/layout.py`의
+# `set_paragraph_format(outline_level=)`이 호출될 때마다 **동일한
+# paraPr이 이미 있어도 새 id로 다시 만든다**(기존 요소 재사용/dedup
+# 조회 없음) — 실한컴은 저장 시점에 중복 paraPr을 자기가 병합한다
+# (titleMark 재프로브에서 paraPrIDRef가 21→20으로 "되돌아간" 현상의
+# 원인, 버그 아님·관측된 실동작으로 문서화됨). 우리 쪽에서 paraPr
+# 재사용 lookup을 추가하면 왕복 시 이 되돌아감이 사라지고 저장 파일도
+# 더 작아진다 — fix 안 함, 스코프 밖.
+#
+# 다음 사이클 칩 후보 3(6.13 트레인㊼): `src/hwpx/oxml/paragraph.py`가
+# `add_date_field`/`add_proofreading_mark` 두 delegator를 추가하며
+# 정확히 1600줄(WP-A owner-file 캡)을 채웠다 — 헤드룸 0. 다음에 이
+# 파일에 뭔가 더 추가해야 하면(신규 필드류 저작 등) 곧바로 게이트가
+# 막는다 — 실제 추출/재구조화 패스가 필요하다(어디를 오버플로 모듈로
+# 뺄지는 이번 트레인에서 정하지 않음, 다음 트레인의 몫).
+#
+# 위 세 칩(table_patch 게이트 미편입·add_heading paraPr 비-dedup·
+# paragraph.py 헤드룸 0)은 다음 사이클 초입 부채상환 트레인 후보로
+# 함께 묶어 처리할 것 — team-lead 지시(6.13 트레인㊼ 정리 커밋).
+ignore_missing_imports = true
+
+[tool.pyright]
+# Keep basic pyright focused on the explicit gradual scope. Feature 025 adds
+# both central facades and every extracted/touched runtime owner to the gate.
+include = [
+    "src/hwpx/document.py",
+    "src/hwpx/errors.py",
+    "src/hwpx/mutation_report.py",
+    "src/hwpx/capabilities.py",
+    # 6.14 트레인㊾-1 — pre-existing 49 errors 정리 후 편입(6.12 이전부터의
+    # 기존 부채, f7e4e67 리뷰가 지목). 대부분 _si()가 돌려주는 int|None을
+    # 산술/비교에 바로 쓰던 자리(스키마상 필수 hp:tc 속성이라 실제로는
+    # None일 수 없음 -- assert로 좁힘) + 한 함수 안에서 변수 이름을
+    # re.Match와 int 양쪽으로 재사용하던 자리(이름만 갈라 해소, 동작
+    # 불변) + 람다 기본인자가 오버로드 추론을 깨던 자리(named 중첩
+    # 함수로 치환). 동작 변경 없음(assert 실패는 이전에도 TypeError로
+    # 이미 죽던 자리를 더 명확한 메시지로 바꾼 것뿐).
+    "src/hwpx/table_patch.py",
+    "src/hwpx/plan/__init__.py",
+    "src/hwpx/plan/_model.py",
+    "src/hwpx/plan/_validate.py",
+    "src/hwpx/plan/_execute.py",
+    "src/hwpx/plan/_schema.py",
+    "src/hwpx/equation/__init__.py",
+    "src/hwpx/equation/tokens.py",
+    "src/hwpx/equation/eqedit.py",
+    "src/hwpx/equation/authoring.py",
+    "src/hwpx/equation/mathml.py",
+    "src/hwpx/equation/render.py",
+    "src/hwpx/tools/document_viewer.py",
+    "src/hwpx/tools/mail_merge.py",
+    "src/hwpx/tools/redline.py",
+    "src/hwpx/_document/_units.py",
+    # 6.0 (062-engine-surface WP-A): 새 모듈은 게이트 안에서 태어난다. 이
+    # 목록이 옛 모듈을 점진 편입하는 것이라고 해서, 새로 만드는 것까지 밖에
+    # 둘 이유는 없다.
+    #
+    # 예외 하나: `_document/_legacy.py`. 본문이 5.8.0 `document.py`의 것을
+    # **그대로** 옮긴 것이고(그 자리에서는 타입 청결했다), 믹스인으로 분리된
+    # 탓에 `self`가 `HwpxDocument`가 아니라 `Self@_LegacyFacade`로 좁혀져
+    # 위임 호출 52건이 전부 같은 한 가지 이유로 붉어진다. `self` 주석을 달면
+    # `inspect.signature`가 바뀌어 shim 락의 시그니처 동일성(이주 창의 핵심
+    # 약속)이 깨진다. 7.0에서 파일째 삭제되므로 편입하지 않는다.
+    "src/hwpx/model.py",
+    "src/hwpx/objects/__init__.py",
+    # 6.0 (062-engine-surface WP-C): 반환 규약 소유 모듈 5종 — 같은 이유로
+    # 게이트 안에서 태어난다(위 WP-A 주석 참조).
+    "src/hwpx/objects/binary_item.py",
+    "src/hwpx/objects/checkbox.py",
+    "src/hwpx/objects/form_field.py",
+    "src/hwpx/objects/results.py",
+    "src/hwpx/objects/tracked.py",
+    "src/hwpx/objects/highlight.py",
+    "src/hwpx/_document/_resolve.py",
+    "src/hwpx/_document/headings.py",
+    "src/hwpx/_document/highlight.py",
+    "src/hwpx/_document/ns",
+    "src/hwpx/_document/fields.py",
+    "src/hwpx/_document/layout.py",
+    "src/hwpx/_document/media.py",
+    "src/hwpx/_document/memos.py",
+    "src/hwpx/_document/persistence.py",
+    "src/hwpx/_document/shapes.py",
+    "src/hwpx/_document/tracked.py",
+    "src/hwpx/oxml/_document_impl.py",
+    "src/hwpx/oxml/_document_primitives.py",
+    "src/hwpx/oxml/document.py",
+    "src/hwpx/oxml/document_parts.py",
+    "src/hwpx/oxml/header_part.py",
+    "src/hwpx/oxml/memo.py",
+    "src/hwpx/oxml/numbering.py",
+    "src/hwpx/oxml/objects.py",
+    "src/hwpx/opc/package.py",
+    "src/hwpx/opc/xml_utils.py",
+    "src/hwpx/opc/relationships.py",
+    "src/hwpx/oxml/paragraph.py",
+    "src/hwpx/oxml/run.py",
+    "src/hwpx/oxml/section.py",
+    "src/hwpx/oxml/section_format.py",
+    "src/hwpx/oxml/section_story.py",
+    "src/hwpx/oxml/simple_parts.py",
+    "src/hwpx/oxml/table.py",
+    "src/hwpx/quality/policy.py",
+    "src/hwpx/quality/rendering.py",
+    "src/hwpx/quality/report.py",
+    "src/hwpx/tools/archive_cli.py",
+    "src/hwpx/tools/package_validator.py",
+    "src/hwpx/tools/page_guard.py",
+    "src/hwpx/tools/template_analyzer.py",
+    "src/hwpx/tools/text_extract_cli.py",
+    "src/hwpx/tools/text_extractor.py",
+    "tests/template_automation/helpers.py",
+    "tests/template_automation/generate_fixtures.py",
+    # 6.4: part-hierarchy read models (gap #15) — born in the gate, per the
+    # WP-A rule above.
+    "src/hwpx/oxml/version_part.py",
+    "src/hwpx/oxml/master_page.py",
+    "src/hwpx/oxml/history_part.py",
+    # 6.6 (train 23): document options/compatibility authoring — born in the
+    # gate, per the WP-A rule above.
+    "src/hwpx/oxml/header_compat.py",
+    # 6.9 (train 33): document insertion/merge — born in the gate, per the
+    # WP-A rule above.
+    "src/hwpx/tools/document_merge.py",
+    # 6.9 (train 34): dutmal/compose authoring — born in the gate, per the
+    # WP-A rule above.
+    "src/hwpx/oxml/dutmal_compose.py",
+    # 6.11 (train 44): add_section() layout-carrier lookup, extracted from
+    # document_parts.py (1600-line cap) — born in the gate, per the WP-A
+    # rule above.
+    "src/hwpx/oxml/section_layout.py",
+    # 6.12 (train 48): opf:metadata (content.hpf document properties) read
+    # model — born in the gate, per the WP-A rule above.
+    "src/hwpx/oxml/document_metadata.py",
+    # 6.12 (train 48): drop cap (hp:rect dropcapstyle) shape-authoring
+    # overflow module, extracted from paragraph.py (1600-line cap) — born
+    # in the gate, per the WP-A rule above.
+    "src/hwpx/oxml/drop_cap.py",
+    # 6.13 (train 48): ensure_numbering's full body (bullet/number/outline
+    # kinds), moved out of header_part.py (1600-line cap, no headroom left
+    # once the new "outline" kind was added) — born in the gate, per the
+    # WP-A rule above.
+    "src/hwpx/oxml/numbering_kinds.py",
+    # 6.13 (train 48): master page (바탕쪽) part creation + manifest
+    # registration — new module from the start (document_parts.py had
+    # modest headroom but this needed more than fit safely), per the WP-A
+    # rule above.
+    "src/hwpx/oxml/master_page_authoring.py",
+    # 6.13 (train 48): date field (hp:fieldBegin type=DATE) + proofreading
+    # mark field (type=PROOFREADING_MARKS_SIGN) authoring — new module
+    # from the start; paragraph.py hit exactly 1600 lines with just the
+    # two delegator methods (zero headroom left, resolved by the
+    # extraction below), per the WP-A rule above.
+    "src/hwpx/oxml/field_marks.py",
+    # 6.14 (train 48/debt3): footnote/endnote (각주/미주) authoring moved
+    # out of paragraph.py verbatim (no behavior change) to restore real
+    # headroom -- same escape valve as dutmal_compose.py/objects.py/
+    # field_marks.py above, per the WP-A rule.
+    "src/hwpx/oxml/note_authoring.py",
+    # Grid clean-up after a cell merge (rows left without cells, columns no
+    # cell starts at) moved out of table.py -- born in the gate, per the WP-A rule.
+    "src/hwpx/oxml/table_merge.py",
+    # Hyperlink field target form (Hancom's Command/Path parameters,
+    # written and read in one place) -- born in the gate, per the WP-A rule.
+    "src/hwpx/oxml/hyperlink_form.py",
+    # Table width/height distribution (distribute cell width row by row) moved out
+    # of table.py -- born in the gate, per the WP-A rule.
+    "src/hwpx/oxml/table_sizes.py",
+    # A paragraph shape's heading (outline levels 8 to 10 in Hancom's hp:switch form),
+    # written and read in one place -- born in the gate, per the WP-A rule.
+    "src/hwpx/oxml/paragraph_heading.py",
+    # Floating-shape reference frames (set_position) and shape-text
+    # vertical alignment -- objects.py's overflow module (1600-line cap),
+    # born in the gate, per the WP-A rule.
+    "src/hwpx/oxml/shape_position.py",
+    # Font table and border-fill reads plus replace_font (header.xml) --
+    # born in the gate, per the WP-A rule.
+    "src/hwpx/oxml/header_fonts.py",
+    # HWP 5.0 (.hwp) container and record layer -- born in the gate, per the
+    # WP-A rule.
+    "src/hwpx/hwp5/__init__.py",
+    "src/hwpx/hwp5/bodytext.py",
+    "src/hwpx/hwp5/cfb.py",
+    "src/hwpx/hwp5/docinfo.py",
+    "src/hwpx/hwp5/errors.py",
+    "src/hwpx/hwp5/fileheader.py",
+    "src/hwpx/hwp5/reader.py",
+    "src/hwpx/hwp5/records.py",
+    "src/hwpx/hwp5/binary.py",
+    "src/hwpx/hwp5/header_xml.py",
+    "src/hwpx/hwp5/owpml.py",
+    "src/hwpx/hwp5/package.py",
+    "src/hwpx/hwp5/section_xml.py",
+    "src/hwpx/hwp5/summary.py",
+    "src/hwpx/hwp5/controls.py",
+    "src/hwpx/hwp5/docinfo_writer.py",
+    "src/hwpx/hwp5/section_writer.py",
+    "src/hwpx/hwp5/shapes.py",
+    "src/hwpx/hwp5/section_common.py",
+    "src/hwpx/hwp5/shape_xml.py",
+    "src/hwpx/hwp5/writer.py",
+]
+pythonVersion = "3.10"
+typeCheckingMode = "basic"
+reportMissingTypeStubs = false
