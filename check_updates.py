@@ -17,6 +17,16 @@ def main():
     out = []
     for name, d in libs.items():
         repo = d["repo"]
+        if repo.startswith("npm:"):
+            try:
+                import urllib.request
+                pkg = repo[4:].replace("/", "%2f")
+                latest = json.load(urllib.request.urlopen(f"https://registry.npmjs.org/{pkg}/latest", timeout=15))["version"]
+                out.append({"lib": name, "pinned": d["pinned_tag"], "latest_tag": latest, "new_tag": latest != d["pinned_tag"],
+                            "upstream_pushed_at": "-", "url": f"https://www.npmjs.com/package/{repo[4:]}"})
+            except Exception as e:
+                out.append({"lib": name, "error": str(e)})
+            continue
         try:
             tag = gh(f"repos/{repo}/tags?per_page=1", ".[0].name")
             pushed = gh(f"repos/{repo}", ".pushed_at")
