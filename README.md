@@ -6,6 +6,8 @@ proposalmaker 등에서 쓰는 오픈소스 라이브러리의 **고정 버전 �
 |---|---|---|---|---|
 | rhwp/ | https://github.com/edwardkim/rhwp | MIT | v0.8.7 | HWP/HWPX 미리보기·렌더(WASM) |
 | python-hwpx/ | https://github.com/airmang/python-hwpx | Apache-2.0 | v6.8.0 | HWPX 읽기·편집·저장 |
+| rea-skills/ | https://github.com/morluto/rea | MIT | main @ 6752875 (2026-11-18), npm rea-agents@6.9.0 | REA 역분석 에이전트 스킬 (로컬앱 동작 이해, 오프라인 고정 사본) |
+| rea-video-skills/ | https://github.com/JuneYaooo/rea-video | Apache-2.0 | main @ 56dd8f9 (2026-11-17), pip git 고정 커밋 | 동영상 샷별 역분석 스킬 (오프라인 도구 모드, 고정 사본) |
 
 - 원본·고정 커밋·제외 항목은 `UPSTREAM.json`. rhwp는 용량 때문에 문서·샘플·PDF·글꼴·시험 자료를 뺐다.
 - 업데이트 확인: `python check_updates.py` (gh CLI 로그인 필요). 새 태그가 있어도 자동으로 바꾸지 않고, 변경 내용을 검토한 뒤 사본과 `UPSTREAM.json`을 갱신한다.
