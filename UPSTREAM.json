@@ -42,6 +42,56 @@
       "pinned_on": "2026-10-23",
       "source": "https://registry.npmjs.org/@rhwp/core/-/core-0.8.7.tgz",
       "excluded": []
+    },
+    "rea-skills": {
+      "excluded": [
+        "src/",
+        "tests/",
+        "website/",
+        "third_party/",
+        "docs/",
+        "examples/",
+        "bridge/",
+        "native/",
+        ".agents/skills/rea-tool-design",
+        ".agents/skills/rea-ci-tests-audit",
+        ".agents/skills/rea-changelog-update",
+        ".agents/skills/rea-analysis-optimization",
+        ".cursor-plugin/",
+        "install.sh",
+        "package.json",
+        "package-lock.json",
+        ".git"
+      ],
+      "excluded_why": "공식 스킬(.agents/skills/reverse-engineer-anything/SKILL.md + references/ 8건)이 있어 그대로 고정 복사한다. Kevin용 SKILL.md를 새로 쓰지 않았다. 저장소 전체(얕은 복제 기준 약 154MB)는 스킬 본체가 아니라 제외. 개발자용 스킬 4건은 REA 자체 개발용이라 제외. .cursor-plugin 사본은 .agents 사본과 바이트 단위 동일함을 확인해 한 벌만 넣었다. 스킬이 가리키는 저장소 docs/ 깊은 안내는 사본에 없고 upstream에서 본다.",
+      "license": "MIT",
+      "node": "22.x (>=22.23.4), 24.x (>=24.22.1), 또는 26.12.1 이상 + npm (README 기준)",
+      "pinned_commit": "675287517c98c702ee88ad036c5e3b8dd4bcc7a7",
+      "pinned_on": "2026-11-18",
+      "pinned_tag": "rea-agents-6.9.0",
+      "repo": "morluto/rea",
+      "role": "REA 역분석 에이전트 스킬 (파워포인트·HWP 등 로컬앱 동작 이해, 로컬 Gemma 오프라인 멀티모달 챗봇 연동 조사)",
+      "source": "https://www.npmjs.com/package/rea-agents (rea-agents@6.9.0, 2026-11-18 npm view 확인)"
+    },
+    "rea-video-skills": {
+      "excluded": [
+        "docs/",
+        "eval/",
+        "i18n/",
+        "scripts/",
+        "rea_video/",
+        "pyproject.toml",
+        "AGENTS.md",
+        ".git"
+      ],
+      "excluded_why": "공식 스킬(skills/rea-video/SKILL.md + references/ 13건)이 있어 그대로 고정 복사한다. 스킬이 직접 가리키는 형식 설명 docs/videomd.md(3,769바이트)만 예외로 docs/에 복사했다. docs/ 전체(약 77MB, 샘플 영상 docs/cases/가 대부분)·eval/·i18n/·scripts/·패키지 소스는 스킬 본체가 아니라 제외. 설치는 pip/pipx 고정 커밋 명령으로 한다. 태그 v0.1.0은 고정 커밋보다 낡아 커밋으로 고정한다. [asr] 추가 기능(SenseVoice, Alibaba 중국산)은 설치하지 않는다 — 전사는 Whisper로 대체한다. Doubao·Qwen-VL 등 중국산 VLM·재생성 모델은 미사용이다.",
+      "license": "Apache-2.0",
+      "pinned_commit": "56dd8f99a43abd0d5c69ae1d972dfd887e50a81a",
+      "pinned_on": "2026-11-18",
+      "pinned_tag": "v0.1.0",
+      "repo": "JuneYaooo/rea-video",
+      "role": "동영상 샷별 역분석 에이전트 스킬 (Lecturemaker 강의 영상 분석·사후만남 영상 학습·로컬 Gemma 동영상 이해, 오프라인 도구 모드)",
+      "source": "pip install \"rea-video[ocr] @ git+https://github.com/JuneYaooo/rea-video@56dd8f99a43abd0d5c69ae1d972dfd887e50a81a\" (ffmpeg, Python 3.10~3.14 필요)"
     }
   }
 }
